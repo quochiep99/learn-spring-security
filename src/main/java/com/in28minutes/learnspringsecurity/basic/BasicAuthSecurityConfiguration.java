@@ -20,8 +20,9 @@ import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.
 public class BasicAuthSecurityConfiguration {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((requests) -> requests.anyRequest().authenticated());
-        // http.formLogin()
+        http.authorizeHttpRequests((requests) -> {
+            requests.requestMatchers("/users/**").hasRole("USER").requestMatchers("/admin/**").hasRole("ADMIN").anyRequest().authenticated();
+        });
         http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.httpBasic();
         http.csrf().disable();
@@ -54,6 +55,4 @@ public class BasicAuthSecurityConfiguration {
                 .addScript(JdbcDaoImpl.DEFAULT_USER_SCHEMA_DDL_LOCATION)
                 .build();
     }
-
-
 }
